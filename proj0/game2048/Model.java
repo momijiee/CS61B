@@ -139,9 +139,9 @@ public class Model extends Observable {
      * */
     public static boolean emptySpaceExists(Board b) {
         int size = b.size();
-        for (int i = 0; i <= size; i++) {
-            for (int j = 0; j <= size; j++) {
-                if (b.tile(j, i).value() == 0) {
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                if (b.tile(j, i) == null) {
                     return true;
                 }
             }
