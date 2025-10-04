@@ -173,8 +173,27 @@ public class Model extends Observable {
      * 2. There are two adjacent tiles with the same value.
      */
     public static boolean atLeastOneMoveExists(Board b) {
-
-        return false;
+        if (Model.emptySpaceExists(b) == true) {
+            return true;
+        } else {
+            int i, j;
+            int size = b.size();
+            for (i = 0; i < size - 1; i += 1) {
+                for (j = 0; j < size; j += 1) {
+                    if (b.tile(j, i).value() == b.tile(j, i+1).value()) {
+                        return true;
+                    }
+                }
+            }
+            for (i = 0; i < size; i += 1) {
+                for (j = 0; j < size - 1; j += 1) {
+                    if (b.tile(j, i).value() == b.tile(j+1, i).value()) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
     }
 
 
