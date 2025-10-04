@@ -1,5 +1,6 @@
 package game2048;
 
+import java.security.KeyStore;
 import java.util.Formatter;
 import java.util.Observable;
 
@@ -137,7 +138,14 @@ public class Model extends Observable {
      *  Empty spaces are stored as null.
      * */
     public static boolean emptySpaceExists(Board b) {
-        // TODO: Fill in this function.
+        int size = b.size();
+        for (int i = 0; i <= size; i++) {
+            for (int j = 0; j <= size; j++) {
+                if (b.tile(j, i).value() == 0) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
