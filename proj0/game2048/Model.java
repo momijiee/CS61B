@@ -118,7 +118,7 @@ public class Model extends Observable {
 
         this.board.setViewingPerspective(side);
         for (j = 0; j < size; j++) {
-            int upCnt = 0;
+            int upCnt = 0; // Put the tile UPCNT tiles up.
             int prevTileVal = 0;
             for (i = size - 1; i >= 0; i--) {
 
