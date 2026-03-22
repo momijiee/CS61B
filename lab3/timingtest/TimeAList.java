@@ -29,7 +29,7 @@ public class TimeAList {
 
         /* Initialize the test time list. */
         int N = 1000;
-        for (int i=0; i<15; i++) {
+        for (int i=0; i<8; i++) {
             Ns.addLast(N);
             N *= 2;
         }
