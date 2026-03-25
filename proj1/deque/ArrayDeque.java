@@ -1,50 +1,45 @@
 package deque;
 
 public class ArrayDeque<T> {
-    private T[] items;
-    private int size;
-    private int first;
-    private int last;
+    private final T[] items;
+    private int size; // the number of elements in items.
+
+    /** The start point of the deque, the first element comes after prev(might be null). */
+    private int prev;
 
 
     public ArrayDeque() {
         items = (T[]) new Object[8];
         size = 0;
+
+        /* the element before items[0]. */
+        prev = getIndex(0, -1);
     }
 
     public ArrayDeque(T item) {
         items = (T[]) new Object[8];
         items[0] = item;
         size = 1;
-        first = 0;
-        last = 0;
+
+        /* the element before items[0]. */
+        prev = getIndex(0, -1);
     }
 
-    private int prevIndex(int index, int length) {
-        index -= length;
-        if (index < 0) {
-            index += items.length;
-        }
-        return index;
-    }
-
-    private int nextIndex(int index, int length) {
-        index += length;
-        if (index >= items.length) {
-            index -= items.length;
-        }
-        return index;
+    /** Get a valid index from 0 to items.length - 1,
+     * starting at POS, moving diff positions. */
+    private int getIndex(int pos, int diff) {
+        int res = (pos + diff) % items.length;
+        return res < 0 ? res + items.length : res;
     }
 
     public void addFirst(T item) {
-        first = prevIndex(this.first, 1);
-        items[first] = item;
+        items[prev] = item;
+        prev = getIndex(prev, -1);
         size += 1;
     }
 
     public void addLast(T item) {
-        last = nextIndex(this.last, 1);
-        items[last] = item;
+        items[getIndex(prev, size + 1)] = item;
         size += 1;
 
     }
@@ -62,21 +57,33 @@ public class ArrayDeque<T> {
     }
 
     public T removeFirst() {
+        if (size == 0) {
+            return null;
+        }
+        int first = getIndex(prev, 1);
         T res = items[first];
         items[first] = null;
-        first = nextIndex(first, 1);
+        prev = first;
+        size -= 1;
         return res;
     }
 
     public T removeLast() {
+        if (size == 0) {
+            return null;
+        }
+        int last = getIndex(prev, size + 1);
         T res = items[last];
         items[last] = null;
-        last = prevIndex(last, 1);
+        size -= 1;
         return res;
     }
 
     public T get(int index) {
-        int i = nextIndex(first, index);
+        if (index < 0 || index >= size) {
+            return null;
+        }
+        int i = getIndex(prev, index + 1);
         return items[i];
     }
 }
