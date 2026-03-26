@@ -2,7 +2,7 @@ package deque;
 
 import java.util.Iterator;
 
-public class LinkedListDeque<T> {
+public class LinkedListDeque<T> implements Iterable<T>{
     public class ListNode {
         public T item;
         public ListNode prev;
@@ -69,7 +69,7 @@ public class LinkedListDeque<T> {
             System.out.println("empty deque");
         }
         while (p.next != sentinel) {
-            System.out.print(p.item + " -> ");
+            System.out.print(p.item + " ");
             p = p.next;
         }
         System.out.println(p.item);
@@ -126,10 +126,47 @@ public class LinkedListDeque<T> {
     }
 
     public Iterator<T> iterator() {
-        return null;
+        return new DequeIterator();
+    }
+
+    private class DequeIterator implements Iterator<T>{
+        private ListNode p;
+        public DequeIterator() {
+            p = sentinel;
+        }
+        public boolean hasNext() {
+            return p.next != sentinel;
+        }
+        public T next() {
+            p = p.next;
+            T res = p.item;
+            return res;
+        }
     }
 
     public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        }
+        if (!(o instanceof LinkedListDeque<?> other)) {
+            return false;
+        }
+
+        if (other.size() != this.size()) {
+            return false;
+        }
+
+        ListNode pThis = this.sentinel;
+        LinkedListDeque<?>.ListNode pOther = other.sentinel;
+
+        while (pThis.next != this.sentinel) {
+            pThis = pThis.next;
+            pOther = pOther.next;
+            if (!(pThis.item.equals(pOther.item))) {
+                return false;
+            }
+        }
+
         return true;
     }
 
