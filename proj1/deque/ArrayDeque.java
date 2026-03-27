@@ -47,20 +47,20 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T>{
     }
 
     public void addFirst(T item) {
+        if (size > items.length * RESIZE_LARGER) {
+            resize(items.length * 2);
+        }
         items[prev] = item;
         prev = getIndex(prev, -1);
         size += 1;
-        if (size > items.length * RESIZE_LARGER) {
-            resize(items.length * 2);
-        }
     }
 
     public void addLast(T item) {
-        items[getIndex(prev, size + 1)] = item;
-        size += 1;
         if (size > items.length * RESIZE_LARGER) {
             resize(items.length * 2);
         }
+        items[getIndex(prev, size + 1)] = item;
+        size += 1;
     }
 
     public boolean isEmpty() {
@@ -72,7 +72,10 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T>{
     }
 
     public void printDeque() {
-
+        for (T item : this) {
+            System.out.print(item + " ");
+        }
+        System.out.println();
     }
 
     public T removeFirst() {
@@ -84,7 +87,7 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T>{
         items[first] = null;
         prev = first;
         size -= 1;
-        if (size > 16 && size < items.length * RESIZE_SMALLER) {
+        if (items.length > 16 && size < items.length * RESIZE_SMALLER) {
             resize((int) Math.round(items.length * 0.5));
         }
         return res;
@@ -98,7 +101,7 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T>{
         T res = items[last];
         items[last] = null;
         size -= 1;
-        if (size > 16 && size < items.length * RESIZE_SMALLER) {
+        if (items.length > 16 && size < items.length * RESIZE_SMALLER) {
             resize((int) Math.round(items.length * 0.5));
         }
         return res;
