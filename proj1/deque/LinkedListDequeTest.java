@@ -1,12 +1,61 @@
 package deque;
 
+import edu.princeton.cs.algs4.StdRandom;
 import jh61b.junit.In;
 import org.junit.Test;
+
+import java.util.Deque;
+
 import static org.junit.Assert.*;
 
 
 /** Performs some basic linked list tests. */
-public class    LinkedListDequeTest {
+public class LinkedListDequeTest {
+
+    @Test
+    public void randomTest() {
+        java.util.ArrayDeque<Integer> lld0 = new java.util.ArrayDeque<>();
+        LinkedListDeque<Integer> lld1 = new LinkedListDeque<>();
+
+        for (int i=0; i<5000; i++) {
+            int op = StdRandom.uniform(0, 6);
+            switch (op) {
+                case 0:
+                    int num1 = StdRandom.uniform(0,500);
+                    lld0.addFirst(num1);
+                    lld1.addFirst(num1);
+                    break;
+                case 1:
+                    int num2 = StdRandom.uniform(0,500);
+                    lld0.addLast(num2);
+                    lld1.addLast(num2);
+                    break;
+                case 2:
+                    assertEquals(lld0.isEmpty(), lld1.isEmpty());
+                    break;
+                case 3:
+                    assertEquals(lld0.size(), lld1.size());
+                    break;
+                case 4:
+                    if (!lld0.isEmpty()) {
+                        Integer res0 = lld0.removeFirst();
+                        Integer res1 = lld1.removeFirst();
+                        assertEquals(res0, res1);
+                    }
+                    break;
+                case 5:
+                    if (!lld0.isEmpty()) {
+                        Integer res2 = lld0.removeLast();
+                        Integer res3 = lld1.removeLast();
+                        assertEquals(res2, res3);
+                    }
+                    break;
+                default:
+                    System.out.println("Invalid input");
+                    break;
+            }
+        }
+    }
 
     @Test
     /** Adds a few things to the list, checking isEmpty() and size() are correct,
@@ -160,6 +209,24 @@ public class    LinkedListDequeTest {
         LinkedListDeque<Integer> lld2 = new LinkedListDeque<>();
 
         assertTrue(lld1.equals(lld2));
+
+        lld1.addFirst(11);
+        lld1.addLast(45);
+        lld1.addLast(14);
+
+        lld2.addFirst(11);
+        lld2.addLast(45);
+        lld2.addLast(14);
+
+        assertTrue(lld1.equals(lld2));
+    }
+
+    @Test
+    public void constructorTest() {
+        LinkedListDeque<Integer> lld1 = new LinkedListDeque<>();
+        LinkedListDeque<Integer> lld2 = new LinkedListDeque<>(12);
+
+        lld1.addFirst(12);
 
         lld1.addFirst(11);
         lld1.addLast(45);
