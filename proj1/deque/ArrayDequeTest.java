@@ -1,11 +1,57 @@
 package deque;
 
+import edu.princeton.cs.algs4.StdRandom;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 
 public class ArrayDequeTest {
+
+    @Test
+    public void randomTest() {
+        java.util.ArrayDeque<Integer> lld0 = new java.util.ArrayDeque<>();
+        ArrayDeque<Integer> lld1 = new ArrayDeque<>();
+
+        for (int i=0; i<5000; i++) {
+            int op = StdRandom.uniform(0, 6);
+            switch (op) {
+                case 0:
+                    int num1 = StdRandom.uniform(0,500);
+                    lld0.addFirst(num1);
+                    lld1.addFirst(num1);
+                    break;
+                case 1:
+                    int num2 = StdRandom.uniform(0,500);
+                    lld0.addLast(num2);
+                    lld1.addLast(num2);
+                    break;
+                case 2:
+                    assertEquals(lld0.isEmpty(), lld1.isEmpty());
+                    break;
+                case 3:
+                    assertEquals(lld0.size(), lld1.size());
+                    break;
+                case 4:
+                    if (!lld0.isEmpty()) {
+                        Integer res0 = lld0.removeFirst();
+                        Integer res1 = lld1.removeFirst();
+                        assertEquals(res0, res1);
+                    }
+                    break;
+                case 5:
+                    if (!lld0.isEmpty()) {
+                        Integer res2 = lld0.removeLast();
+                        Integer res3 = lld1.removeLast();
+                        assertEquals(res2, res3);
+                    }
+                    break;
+                default:
+                    System.out.println("Invalid input");
+                    break;
+            }
+        }
+    }
 
     @Test
     public void addIsEmptySizeTest() {

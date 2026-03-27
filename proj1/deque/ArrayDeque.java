@@ -6,6 +6,9 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T>{
     private T[] items;
     private int size; // the number of elements in items.
 
+    private double RESIZE_LARGER = 0.75;
+    private double RESIZE_SMALLER = 0.25;
+
     /** The start point of the deque, the first element comes after prev(might be null). */
     private int prev;
 
@@ -47,12 +50,17 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T>{
         items[prev] = item;
         prev = getIndex(prev, -1);
         size += 1;
+        if (size > items.length * RESIZE_LARGER) {
+            resize(items.length * 2);
+        }
     }
 
     public void addLast(T item) {
         items[getIndex(prev, size + 1)] = item;
         size += 1;
-
+        if (size > items.length * RESIZE_LARGER) {
+            resize(items.length * 2);
+        }
     }
 
     public boolean isEmpty() {
@@ -76,6 +84,9 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T>{
         items[first] = null;
         prev = first;
         size -= 1;
+        if (size > 16 && size < items.length * RESIZE_SMALLER) {
+            resize((int) Math.round(items.length * 0.5));
+        }
         return res;
     }
 
@@ -83,10 +94,13 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T>{
         if (size == 0) {
             return null;
         }
-        int last = getIndex(prev, size + 1);
+        int last = getIndex(prev, size);
         T res = items[last];
         items[last] = null;
         size -= 1;
+        if (size > 16 && size < items.length * RESIZE_SMALLER) {
+            resize((int) Math.round(items.length * 0.5));
+        }
         return res;
     }
 
