@@ -109,7 +109,7 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T> {
 
     private class DequeIterator implements Iterator<T> {
         private int p;
-        public DequeIterator() {
+        DequeIterator() {
             p = 0;
         }
         public boolean hasNext() {

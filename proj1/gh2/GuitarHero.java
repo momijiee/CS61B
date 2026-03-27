@@ -12,21 +12,23 @@ public class GuitarHero {
     public GuitarHero() {
         strings = new GuitarString[keyboard.length()];
         for (int i = 0; i < strings.length; i++) {
-            strings[i] = new GuitarString(440 * Math.pow(2,(double) (i - 24) / 12));
+            strings[i] = new GuitarString(440 * Math.pow(2, (double) (i - 24) / 12));
         }
     }
 
     public void sample() {
-        double sample = 0;
+        double newSample = 0;
         for (int i = 0; i < strings.length; i++) {
-            sample += strings[i].sample();
+            newSample += strings[i].sample();
         }
-        this.sample = sample;
+        this.sample = newSample;
     }
 
     public void pluck(char key) {
         int index = keyboard.indexOf(key);
-        if (index == -1) { return;}
+        if (index == -1) {
+            return;
+        }
         strings[index].pluck();
     }
 
