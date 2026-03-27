@@ -2,12 +2,13 @@ package deque;
 
 import java.util.Iterator;
 
-public class ArrayDeque<T> implements Iterable<T>, Deque<T>{
+public class ArrayDeque<T> implements Iterable<T>, Deque<T> {
     private T[] items;
     private int size; // the number of elements in items.
 
-    private double RESIZE_LARGER = 0.75;
-    private double RESIZE_SMALLER = 0.25;
+    private static double RESIZE_LARGER = 0.75;
+    private static double RESIZE_SMALLER = 0.25;
+    private static int MIN_RESIZE_LENGTH = 16;
 
     /** The start point of the deque, the first element comes after prev(might be null). */
     private int prev;
@@ -39,7 +40,7 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T>{
 
     private void resize(int capacity) {
         T[] newItems = (T[]) new Object[capacity];
-        for (int i=0; i<size; i++) {
+        for (int i = 0; i < size; i++) {
             newItems[i] = get(i);
         }
         items = newItems;
@@ -83,7 +84,7 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T>{
         items[first] = null;
         prev = first;
         size -= 1;
-        if (items.length > 16 && size < items.length * RESIZE_SMALLER) {
+        if (items.length > MIN_RESIZE_LENGTH && size < items.length * RESIZE_SMALLER) {
             resize((int) Math.round(items.length * 0.5));
         }
         return res;
@@ -97,7 +98,7 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T>{
         T res = items[last];
         items[last] = null;
         size -= 1;
-        if (items.length > 16 && size < items.length * RESIZE_SMALLER) {
+        if (items.length > MIN_RESIZE_LENGTH && size < items.length * RESIZE_SMALLER) {
             resize((int) Math.round(items.length * 0.5));
         }
         return res;
@@ -115,7 +116,7 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T>{
         return new DequeIterator();
     }
 
-    private class DequeIterator implements Iterator<T>{
+    private class DequeIterator implements Iterator<T> {
         private int p;
         public DequeIterator() {
             p = 0;
@@ -145,7 +146,7 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T>{
             return false;
         }
 
-        for (int i=0; i<this.size; i++) {
+        for (int i = 0; i < this.size; i++) {
             if (!(this.get(i).equals(other.get(i)))) {
                 return false;
             }

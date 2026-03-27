@@ -2,7 +2,7 @@ package deque;
 
 import java.util.Iterator;
 
-public class LinkedListDeque<T> implements Iterable<T>, Deque<T>{
+public class LinkedListDeque<T> implements Iterable<T>, Deque<T> {
     public class ListNode {
         public T item;
         public ListNode prev;
@@ -20,14 +20,14 @@ public class LinkedListDeque<T> implements Iterable<T>, Deque<T>{
     private int size;
     private final ListNode sentinel;
 
-    public LinkedListDeque(){
+    public LinkedListDeque() {
         sentinel = new ListNode();
         sentinel.next = sentinel;
         sentinel.prev = sentinel;
         size = 0;
     }
 
-    public LinkedListDeque(T item){
+    public LinkedListDeque(T item) {
         sentinel = new ListNode();
         ListNode node = new ListNode(item);
         sentinel.next = node;
@@ -87,7 +87,7 @@ public class LinkedListDeque<T> implements Iterable<T>, Deque<T>{
             return null;
         }
         ListNode removedNode = sentinel.prev;
-        sentinel.prev =removedNode.prev;
+        sentinel.prev = removedNode.prev;
         removedNode.prev.next = sentinel;
         size -= 1;
         return removedNode.item;
@@ -115,8 +115,7 @@ public class LinkedListDeque<T> implements Iterable<T>, Deque<T>{
     private  T getRecursiveHelper(ListNode p, int index) {
         if (index == 0) {
             return p.item;
-        }
-        else {
+        } else {
             return getRecursiveHelper(p.next, index - 1);
         }
     }
@@ -125,7 +124,7 @@ public class LinkedListDeque<T> implements Iterable<T>, Deque<T>{
         return new DequeIterator();
     }
 
-    private class DequeIterator implements Iterator<T>{
+    private class DequeIterator implements Iterator<T> {
         private ListNode p;
         public DequeIterator() {
             p = sentinel;
@@ -154,7 +153,7 @@ public class LinkedListDeque<T> implements Iterable<T>, Deque<T>{
             return false;
         }
 
-        for (int i=0; i<this.size; i++) {
+        for (int i = 0; i < this.size; i++) {
             if (!(this.get(i).equals(other.get(i)))) {
                 return false;
             }
