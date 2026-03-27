@@ -1,7 +1,9 @@
 package deque;
 
-public class ArrayDeque<T> {
-    private final T[] items;
+import java.util.Iterator;
+
+public class ArrayDeque<T> implements Iterable<T>, Deque<T>{
+    private T[] items;
     private int size; // the number of elements in items.
 
     /** The start point of the deque, the first element comes after prev(might be null). */
@@ -30,6 +32,15 @@ public class ArrayDeque<T> {
     private int getIndex(int pos, int diff) {
         int res = (pos + diff) % items.length;
         return res < 0 ? res + items.length : res;
+    }
+
+    private void resize(int capacity) {
+        T[] newItems = (T[]) new Object[capacity];
+        for (int i=0; i<size; i++) {
+            newItems[i] = get(i);
+        }
+        items = newItems;
+        prev = getIndex(0, -1);
     }
 
     public void addFirst(T item) {
@@ -85,5 +96,46 @@ public class ArrayDeque<T> {
         }
         int i = getIndex(prev, index + 1);
         return items[i];
+    }
+
+    public Iterator<T> iterator() {
+        return new DequeIterator();
+    }
+
+    private class DequeIterator implements Iterator<T>{
+        private int p;
+        public DequeIterator() {
+            p = 0;
+        }
+        public boolean hasNext() {
+            return p < size;
+        }
+        public T next() {
+            T res = get(p);
+            //T res = items[getIndex(prev, p + 1)];
+            p += 1;
+            return res;
+        }
+    }
+
+    public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        }
+        if (!(o instanceof Deque<?> other)) {
+            return false;
+        }
+
+        if (other.size() != this.size()) {
+            return false;
+        }
+
+        for (int i=0; i<this.size; i++) {
+            if (!(this.get(i).equals(other.get(i)))) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

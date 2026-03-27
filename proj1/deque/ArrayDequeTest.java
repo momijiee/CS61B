@@ -103,4 +103,19 @@ public class ArrayDequeTest {
         assertEquals(1, (int) lld1.get(0));
         assertEquals(3, (int) lld1.get(1));
     }
+
+    @Test
+    public void iteratorTest() {
+        ArrayDeque<Integer> lld1 = new ArrayDeque<>();
+
+        lld1.addFirst(11);
+        lld1.addLast(45);
+        lld1.addLast(14);
+
+        int j = 0;
+        for (int i : lld1) {
+            assertEquals(i, (int) lld1.get(j));
+            j += 1;
+        }
+    }
 }
