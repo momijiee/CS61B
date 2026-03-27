@@ -4,6 +4,7 @@ import edu.princeton.cs.algs4.StdRandom;
 import jh61b.junit.In;
 import org.junit.Test;
 
+import java.util.ArrayDeque;
 import java.util.Deque;
 
 import static org.junit.Assert.*;
@@ -222,20 +223,13 @@ public class LinkedListDequeTest {
     }
 
     @Test
-    public void constructorTest() {
-        LinkedListDeque<Integer> lld1 = new LinkedListDeque<>();
-        LinkedListDeque<Integer> lld2 = new LinkedListDeque<>(12);
+    public void dequeEqualTest() {
+        LinkedListDeque<Integer> lld = new LinkedListDeque<>();
+        deque.ArrayDeque<Integer> ad = new deque.ArrayDeque<>();
 
-        lld1.addFirst(12);
+        lld.addFirst(10);
+        ad.addFirst(10);
 
-        lld1.addFirst(11);
-        lld1.addLast(45);
-        lld1.addLast(14);
-
-        lld2.addFirst(11);
-        lld2.addLast(45);
-        lld2.addLast(14);
-
-        assertTrue(lld1.equals(lld2));
+        assertTrue(lld.equals(ad));
     }
 }

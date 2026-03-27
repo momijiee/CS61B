@@ -22,15 +22,6 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T> {
         prev = getIndex(0, -1);
     }
 
-    public ArrayDeque(T item) {
-        items = (T[]) new Object[8];
-        items[0] = item;
-        size = 1;
-
-        /* the element before items[0]. */
-        prev = getIndex(0, -1);
-    }
-
     /** Get a valid index from 0 to items.length - 1,
      * starting at POS, moving diff positions. */
     private int getIndex(int pos, int diff) {
@@ -132,21 +123,24 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T> {
         }
     }
 
+    @Override
     public boolean equals(Object o) {
+        if (o == null) {
+            return false;
+        }
         if (o == this) {
             return true;
         }
-        if (o.getClass() != this.getClass()) {
+        if (!(o instanceof Deque)) {
             return false;
         }
-
         Deque<T> other = (Deque<T>) o;
 
         if (other.size() != this.size()) {
             return false;
         }
 
-        for (int i = 0; i < this.size; i++) {
+        for (int i = 0; i < this.size(); i++) {
             if (!(this.get(i).equals(other.get(i)))) {
                 return false;
             }

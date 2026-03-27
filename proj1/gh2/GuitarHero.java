@@ -5,20 +5,20 @@ import edu.princeton.cs.algs4.StdDraw;
 
 public class GuitarHero {
 
-    public static String keyboard = "q2we4r5ty7u8i9op-[=zxdcfvgbnjmk,.;/' ";
-    public GuitarString[] strings;
-    public double sample;
+    private static String keyboard = "q2we4r5ty7u8i9op-[=zxdcfvgbnjmk,.;/' ";
+    private GuitarString[] strings;
+    private double sample;
 
     public GuitarHero() {
         strings = new GuitarString[keyboard.length()];
-        for (int i=0; i<strings.length; i++) {
+        for (int i = 0; i < strings.length; i++) {
             strings[i] = new GuitarString(440 * Math.pow(2,(double) (i - 24) / 12));
         }
     }
 
     public void sample() {
         double sample = 0;
-        for (int i=0; i<strings.length; i++) {
+        for (int i = 0; i < strings.length; i++) {
             sample += strings[i].sample();
         }
         this.sample = sample;
@@ -31,9 +31,13 @@ public class GuitarHero {
     }
 
     public void tic() {
-        for (int i=0; i<strings.length; i++) {
+        for (int i = 0; i < strings.length; i++) {
             strings[i].tic();
         }
+    }
+
+    public double getSample() {
+        return this.sample;
     }
 
     public static void main(String[] args) {
@@ -51,7 +55,7 @@ public class GuitarHero {
             guitarHero.sample();
 
             /* play the sample on standard audio */
-            StdAudio.play(guitarHero.sample);
+            StdAudio.play(guitarHero.getSample());
 
             /* advance the simulation of each guitar string by one step */
             guitarHero.tic();
