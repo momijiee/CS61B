@@ -20,8 +20,9 @@ public class Main {
         String firstArg = args[0];
         switch (firstArg) {
             case "init": {
-                // TODO: handle the `init` command
-
+                // Handle the `init` command
+                validateNumArgs(args, 1);
+                Repository.init();
                 break;
             }
             case "add":
@@ -31,7 +32,7 @@ public class Main {
                 // handle `commit [message]` command
                 validateNumArgs(args, 2);
                 String message = args[1];
-
+                Repository.makeCommit(message);
                 break;
             case "checkout":
 

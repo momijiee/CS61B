@@ -9,7 +9,7 @@ import static gitlet.Utils.*;
  *  TODO: It's a good idea to give a description here of what else this Class
  *  does at a high level.
  *
- *  @author TODO
+ *  @author momiji
  */
 public class Repository {
     /**
@@ -23,7 +23,33 @@ public class Repository {
     /** The current working directory. */
     public static final File CWD = new File(System.getProperty("user.dir"));
     /** The .gitlet directory. */
-    public static final File GITLET_DIR = join(CWD, ".gitlet");
+    public static final File GITLET_DIR = join(CWD, ".gitlet"); // root dir
+    public static final File OBJECTS_DIR = join(GITLET_DIR, "objects");
 
     /* TODO: fill in the rest of this class. */
+    /** initialize the repository */
+    public static void init() {
+        if (GITLET_DIR.exists()) {
+            throw new RuntimeException("A Gitlet version-control system already exists in the current directory.");
+        }
+        setUpDIR();
+        Commit initCommit = Commit.initCommit();
+        File f = join(OBJECTS_DIR, initCommit.toSHA1());
+        writeObject(f, initCommit);
+    }
+
+    private static void setUpDIR() {
+        GITLET_DIR.mkdir();
+        OBJECTS_DIR.mkdir();
+    }
+
+    /** make a new Commit */
+    public static void makeCommit(String message) {
+
+    }
+
+    private static void saveCommit(Commit commit) {
+
+    }
+
 }
