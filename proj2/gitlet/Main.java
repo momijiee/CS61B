@@ -22,24 +22,41 @@ public class Main {
             case "init": {
                 // Handle the `init` command
                 validateNumArgs(args, 1);
+
                 Repository.init();
+
                 break;
             }
-            case "add":
-                // TODO: handle the `add [filename]` command
+            case "add": {
+                // handle the `add [filename]` command
+                validateNumArgs(args, 2);
+
+                String filename = args[1];
+
+                Repository.add(filename);
+
                 break;
-            case "commit":
+            }
+            case "commit": {
                 // handle `commit [message]` command
                 validateNumArgs(args, 2);
+
                 String message = args[1];
-                Repository.makeCommit(message);
+
+                Repository.commit(message);
+
                 break;
+            }
             case "checkout":
 
                 break;
-            case "log":
+            case "log": {
+                validateNumArgs(args, 1);
+
+                Repository.log();
 
                 break;
+            }
             default:
                 printThenExit("No command with that name exists.");
         }

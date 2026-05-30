@@ -1,6 +1,9 @@
 package gitlet;
 
 import java.io.File;
+import java.io.Serializable;
+import java.util.HashMap;
+
 import static gitlet.Utils.*;
 
 // TODO: any imports you need here
@@ -25,31 +28,156 @@ public class Repository {
     /** The .gitlet directory. */
     public static final File GITLET_DIR = join(CWD, ".gitlet"); // root dir
     public static final File OBJECTS_DIR = join(GITLET_DIR, "objects");
+    public static final File HEAD_DIR = join(GITLET_DIR, "HEAD");
 
     /* TODO: fill in the rest of this class. */
-    /** initialize the repository */
+
+    /** initialize the repository
+     * assuming that a repo has been initialized when .gitlet is created,
+     * and the directory inside are all created correctly (and never changed manually)
+     */
     public static void init() {
         if (GITLET_DIR.exists()) {
             throw new RuntimeException("A Gitlet version-control system already exists in the current directory.");
+        } else {
+            initDIR();
+            saveGitletObject(Commit.initCommit());
+            initHEAD();
+            StagingArea.initStagingArea();
         }
-        setUpDIR();
-        Commit initCommit = Commit.initCommit();
-        File f = join(OBJECTS_DIR, initCommit.toSHA1());
-        writeObject(f, initCommit);
     }
 
-    private static void setUpDIR() {
+    public static void add(String filename) {
+        File f = join(CWD, filename);
+
+        StagingArea s = StagingArea.getStagingArea();
+
+        if (f.exists()) {
+            String content = Utils.readContentsAsString(f);
+            Blob blob = new Blob(content);
+            saveGitletObject(blob);
+
+            s.addFile(filename, blob);
+
+        } else {
+            s.removeFile(filename);
+
+        }
+    }
+
+    public static void commit(String message) {
+        StagingArea s = StagingArea.getStagingArea();
+
+        Commit headCommit = getHeadCommit();
+
+        HashMap<String, String> map = headCommit.getMap();
+
+        for (String file : s.stagedToAdd.keySet()) {
+            if (!map.containsKey(file)) {
+                map.put(file, s.stagedToAdd.get(file));
+            } else {
+                map.replace(file, s.stagedToAdd.get(file));
+            }
+        }
+
+        for (String file : s.stagedToDelete) {
+            map.remove(file);
+        }
+
+        Commit newCommit = new Commit(message, headCommit, map);
+
+        saveGitletObject(newCommit);
+        updateHEAD(newCommit);
+    }
+
+    public static void log() {
+        Commit headCommit = getHeadCommit();
+
+        while (headCommit != null) {
+            headCommit.print();
+            headCommit = getParentCommit(headCommit);
+        }
+    }
+
+    private static void initDIR() {
         GITLET_DIR.mkdir();
         OBJECTS_DIR.mkdir();
     }
 
-    /** make a new Commit */
-    public static void makeCommit(String message) {
-
+    private static void initHEAD() {
+        updateHEAD(Commit.initCommit());
     }
 
-    private static void saveCommit(Commit commit) {
-
+    private static void updateHEAD(Commit commit) {
+        writeContents(HEAD_DIR, commit.toSHA1());
     }
 
+    private static void saveGitletObject(GitletObject object) {
+        String sha = object.toSHA1();
+        String prefix = sha.substring(0, 2);
+        String rest = sha.substring(2);
+
+        if (!join(OBJECTS_DIR, prefix).exists()) {
+            join(OBJECTS_DIR, prefix).mkdir();
+        }
+
+        File f = join(OBJECTS_DIR, prefix, rest);
+
+        if (f.exists()) {
+            return;
+        }
+
+        writeObject(f, (Serializable) object);
+    }
+
+    private static Commit readCommit(String sha) {
+        File f = shaToFile(sha);
+
+        if (f == null) {
+            return null;
+        }
+
+        return readObject(f, Commit.class);
+    }
+
+    private static Blob readBlob(String sha) {
+        File f = shaToFile(sha);
+
+        if (f == null) {
+            return null;
+        }
+
+        return readObject(f, Blob.class);
+    }
+
+    private static File shaToFile(String sha) {
+        String prefix = sha.substring(0, 2);
+        String rest = sha.substring(2);
+
+        if (!join(OBJECTS_DIR, prefix).exists()) {
+            return null;
+        }
+
+        File f = join(OBJECTS_DIR, prefix, rest);
+
+        if (!f.exists()) {
+            return null;
+        }
+
+        return f;
+    }
+
+    private static Commit getHeadCommit() {
+        String head = readContentsAsString(HEAD_DIR);
+        return readCommit(head);
+    }
+
+    private static Commit getParentCommit(Commit commit) {
+        String parentHash = commit.getParent();
+
+        if (parentHash == null) {
+            return null;
+        }
+        return readCommit(parentHash);
+    }
 }
