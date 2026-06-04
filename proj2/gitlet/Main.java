@@ -48,7 +48,14 @@ public class Main {
                 break;
             }
             case "checkout":
-
+                if (args.length == 3 && args[1].equals("--")) {
+                    String filename = args[2];
+                    Repository.checkoutFile(filename);
+                } else if (args.length == 4 && args[2].equals("--")) {
+                    String commitHash = args[1];
+                    String filename = args[3];
+                    Repository.checkoutFile(commitHash, filename);
+                }
                 break;
             case "log": {
                 validateNumArgs(args, 1);

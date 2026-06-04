@@ -6,6 +6,10 @@ public class Blob implements Serializable, GitletObject {
 
     private String content;
 
+    public String getContent() {
+        return content;
+    }
+
     public Blob(String content) {
         this.content = content;
     }

@@ -1,6 +1,7 @@
 package gitlet;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /** Represents a gitlet commit object.
@@ -79,6 +80,7 @@ public class Commit implements Serializable, GitletObject {
                 sb.append(blobKey);
                 sb.append(commit.filenameToBlobMap.get(blobKey));
             }
+
         } else {
             sb.append("null");
         }
@@ -97,7 +99,24 @@ public class Commit implements Serializable, GitletObject {
     public void print() {
         System.out.println("===");
         System.out.println("commit " + this.toSHA1());
-        System.out.println("Date: " + this.timestamp);
+        SimpleDateFormat formatter =
+                new SimpleDateFormat(
+                        "EEE MMM dd HH:mm:ss yyyy Z",
+                        Locale.ENGLISH);
+
+        String timeFormatted = formatter.format(this.timestamp);
+
+        System.out.println("Date: " + timeFormatted);
         System.out.println(message);
+        System.out.println();
+
+        /* DEBUG: */
+        /*
+        System.out.println("Parent: " + this.parent);
+        System.out.println("Directory: ");
+        for (String file : this.filenameToBlobMap.keySet()) {
+            System.out.println(file + "->" + filenameToBlobMap.get(file));
+        }
+        */
     }
 }

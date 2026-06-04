@@ -13,26 +13,63 @@ public class StagingArea implements Serializable {
 
     public HashMap<String, String> stagedToAdd;
 
-    public HashSet<String> stagedToDelete;
+    public static void addFile(String filename, Blob blob) {
+        StagingArea s = StagingArea.getStagingArea();
+
+        Commit head = Repository.getHeadCommit();
+
+        /* add file identical to current commit */
+        if (head.getMap().get(filename) != null && head.getMap().get(filename).equals(blob.toSHA1())) {
+
+            /* remove the map if exist */
+            s.stagedToAdd.remove(filename);
+
+        } else {
+
+            /* add map */
+            s.stagedToAdd.put(filename, blob.toSHA1());
+
+        }
+        StagingArea.saveStagingArea(s);
+
+    }
+
+    public static HashMap<String, String> makeCommit() {
+        StagingArea s = StagingArea.getStagingArea();
+
+        Commit headCommit = Repository.getHeadCommit();
+
+        /* get a copy of file map */
+        HashMap<String, String> map = new HashMap<>(headCommit.getMap());
+
+        for (String file : s.stagedToAdd.keySet()) {
+            map.put(file, s.stagedToAdd.get(file));
+        }
+
+        s.cleanArea();
+        StagingArea.saveStagingArea(s);
+
+        return map;
+    }
 
     private StagingArea() {
         stagedToAdd = new HashMap<>();
-        stagedToDelete = new HashSet<>();
     }
 
     public static void initStagingArea() {
-        writeObject(STAGING_AREA_DIR, new StagingArea());
+        StagingArea s = new StagingArea();
+        saveStagingArea(s);
+    }
+
+    public static void saveStagingArea(StagingArea area) {
+        writeObject(STAGING_AREA_DIR, area);
     }
 
     public static StagingArea getStagingArea() {
         return Utils.readObject(STAGING_AREA_DIR, StagingArea.class);
     }
 
-    public void addFile(String filename, Blob blob) {
-        stagedToAdd.put(filename, blob.toSHA1());
-    }
-
-    public void removeFile(String filename) {
-        stagedToDelete.add(filename);
+    public void cleanArea() {
+        stagedToAdd.clear();
     }
 }

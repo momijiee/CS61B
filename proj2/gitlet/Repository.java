@@ -47,44 +47,29 @@ public class Repository {
         }
     }
 
+    /** Add a file to staging area
+     * raise an Error when the file does not exist
+     */
     public static void add(String filename) {
         File f = join(CWD, filename);
-
-        StagingArea s = StagingArea.getStagingArea();
-
-        if (f.exists()) {
-            String content = Utils.readContentsAsString(f);
-            Blob blob = new Blob(content);
-            saveGitletObject(blob);
-
-            s.addFile(filename, blob);
-
-        } else {
-            s.removeFile(filename);
-
+        if (!f.exists()) {
+            throw new RuntimeException("File does not exist.");
         }
+
+        /* save the file into objects */
+        String content = Utils.readContentsAsString(f);
+        Blob blob = new Blob(content);
+        saveGitletObject(blob); // do nothing if exact same object exist
+
+        /* add the file to stagingArea */
+        StagingArea.addFile(filename, blob);
     }
 
     public static void commit(String message) {
-        StagingArea s = StagingArea.getStagingArea();
 
-        Commit headCommit = getHeadCommit();
+        HashMap<String, String> map = StagingArea.makeCommit();
 
-        HashMap<String, String> map = headCommit.getMap();
-
-        for (String file : s.stagedToAdd.keySet()) {
-            if (!map.containsKey(file)) {
-                map.put(file, s.stagedToAdd.get(file));
-            } else {
-                map.replace(file, s.stagedToAdd.get(file));
-            }
-        }
-
-        for (String file : s.stagedToDelete) {
-            map.remove(file);
-        }
-
-        Commit newCommit = new Commit(message, headCommit, map);
+        Commit newCommit = new Commit(message, getHeadCommit(), map);
 
         saveGitletObject(newCommit);
         updateHEAD(newCommit);
@@ -97,6 +82,40 @@ public class Repository {
             headCommit.print();
             headCommit = getParentCommit(headCommit);
         }
+    }
+
+    public static void checkoutFile(String filename) {
+        checkout(getHeadCommit(), filename);
+    }
+
+    public static void checkoutFile(String commitHash, String filename) {
+        Commit commit;
+        if (commitHash.length() == 40) {
+            commit = readCommit(commitHash);
+        } else {
+            // TODO: support abbreviate ids
+            throw new RuntimeException("invalid commit id");
+        }
+
+        if (commit == null) {
+            throw new RuntimeException("No commit with that id exists.");
+        }
+
+        checkout(commit, filename);
+    }
+
+    private static void checkout(Commit commit, String filename) {
+        if (!commit.getMap().containsKey(filename)) {
+            throw new RuntimeException("File does not exist in that commit.");
+        }
+
+        Blob b = readBlob(commit.getMap().get(filename));
+        if (b == null) {
+            throw new RuntimeException("File not found");
+        }
+
+        File f = join(CWD, filename);
+        writeContents(f, b.getContent());
     }
 
     private static void initDIR() {
@@ -167,7 +186,7 @@ public class Repository {
         return f;
     }
 
-    private static Commit getHeadCommit() {
+    public static Commit getHeadCommit() {
         String head = readContentsAsString(HEAD_DIR);
         return readCommit(head);
     }
