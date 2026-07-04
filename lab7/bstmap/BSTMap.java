@@ -123,14 +123,64 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V>{
     }
 
     public V remove(K key) {
+        if (!containsKey(key)) {
+            return null;
+        }
+        V res = get(key);
+        this.root = deleteNode(root, key);
+        size -= 1;
+        return res;
+    }
+
+    private BSTNode deleteNode(BSTNode node, K key) {
+        if (node == null) {
+            return null;
+        }
+
+        if (node.key.compareTo(key) > 0) {
+            node.left = deleteNode(node.left, key);
+            return node;
+        } else if (node.key.compareTo(key) < 0) {
+            node.right = deleteNode(node.right, key);
+            return node;
+        }
+
+        if (node.left == null && node.right == null) {
+            return null;
+        } else if (node.left != null && node.right == null) {
+            return node.left;
+        } else if (node.right != null && node.left == null) {
+            return node.right;
+        }
+
+        BSTNode newNode = node.right;
+        newNode.right = deleteNode(newNode, newNode.key);
+        newNode.left = node.left;
+        return newNode;
 
     }
 
     public V remove(K key, V value) {
-        throw new UnsupportedOperationException();
+        if (!containsKey(key) || get(key) != value) {
+            return null;
+        }
+        return remove(key);
     }
 
     public Iterator<K> iterator() {
         throw new UnsupportedOperationException();
+    }
+
+    public void printInOrder() {
+        printNode(root);
+    }
+
+    private void printNode(BSTNode node) {
+        if (node == null) {
+            return;
+        }
+        printNode(node.left);
+        System.out.print(node.key);
+        printNode(node.right);
     }
 }
